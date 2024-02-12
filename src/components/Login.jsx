@@ -29,8 +29,8 @@ const Login = () => {
             if (response.ok) {
                 const data = await response.json()
                 const email = data.email.split('@')[0]
-                localStorage.setItem('ExpenseUToken', data.idToken)
-                localStorage.setItem('ExpenseUEmail', email)
+                localStorage.setItem('MailboxUToken', data.idToken)
+                localStorage.setItem('MailboxUEmail', email)
                 navigate('/')
             } else {
                 const data = await response.json()
