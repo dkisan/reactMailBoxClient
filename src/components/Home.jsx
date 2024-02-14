@@ -1,11 +1,14 @@
 import { useState } from "react";
 import SendBox from "./SendBox";
 import Inbox from "./Inbox";
+import { useSelector } from "react-redux";
 
 const Home = () => {
     const [btn, setBtn] = useState('Inbox')
-    const [unread, setUnread] = useState(0)
+    // const [unread, setUnread] = useState(0)
     const c = "bg-blue-600 text-white font-bold py-6 rounded-md text-xl"
+
+    const unread = useSelector(state => state.mail.unread)
 
     const btnHandler = (event) => {
         setBtn(event.target.innerHTML.split(' ')[0])
@@ -21,12 +24,12 @@ const Home = () => {
             <div className="w-full flex gap-2 flex-1">
                 <div className="w-1/6 bg-gray-100 flex flex-col pt-5 gap-2">
                     <button className={btn === 'Compose' ? c : ''} onClick={btnHandler}>Compose</button>
-                    <button className={btn === 'Inbox' ? c : ''} onClick={btnHandler}>Inbox {unread !== 0 && unread}</button>
+                    <button className={btn === 'Inbox' ? c : ''} onClick={btnHandler}>Inbox {unread > 0 && unread}</button>
                     <button className={btn === 'Sent' ? c : ''} onClick={btnHandler}>Sent</button>
                 </div>
                 <div className="w-5/6">
                     {btn === 'Compose' && < SendBox />}
-                    {btn === 'Inbox' && < Inbox setUnread={setUnread} unread={unread} />}
+                    {btn === 'Inbox' && < Inbox />}
                 </div>
 
             </div>

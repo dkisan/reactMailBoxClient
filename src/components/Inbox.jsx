@@ -1,19 +1,23 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HTMLReactParser from 'html-react-parser';
+import { useDispatch, useSelector } from "react-redux";
+import { mailactions } from "../store/mailSlice";
 
 
 const Inbox = (props) => {
     const navigate = useNavigate()
-    const [mail, setMail] = useState([])
+
+    const mail = useSelector(state => state.mail.mail)
+
+    const dispatch = useDispatch()
 
     const MailList = (props) => {
-        const [status, setStatus] = useState(false)
-        const [mailUnread, setMailUnead] = useState(props.m.read)
+
 
         const contentHandler = async () => {
             const user = localStorage.getItem('MailboxUEmail')
-            if (mailUnread === 0) {
+            if (props.m.read === 0) {
                 try {
                     const response = await fetch(`https://reactcrud-51072-default-rtdb.firebaseio.com/mailbox/${user}/receive/${props.m.key}.json`, {
                         method: 'PUT',
@@ -23,10 +27,7 @@ const Inbox = (props) => {
                         })
                     })
                     if (response.ok) {
-                        console.log('hi')
-                        setStatus((prev) => !prev)
-                        setMailUnead(1)
-                        // props.setUnread(props.unread - 1)
+                        dispatch(mailactions.showdecreaseHandler(props.m.key))
                     } else {
                         const data = await response.json()
                         throw data.error
@@ -37,7 +38,9 @@ const Inbox = (props) => {
                     alert('some error occured')
                 }
             } else {
-                setStatus((prev) => !prev)
+                // setStatus((prev) => !prev)
+                // dispatch(mailactions.decreaseUnread())
+                dispatch(mailactions.showdecreaseHandler(props.m.key))
 
             }
 
@@ -46,11 +49,11 @@ const Inbox = (props) => {
         return (
             <div className="flex flex-col gap-2 border-b-2 p-2 cursor-pointer" onClick={contentHandler}>
                 <div className="flex gap-2 p-2 items-center">
-                    {mailUnread === 0 && <p className="bg-red-400 rounded-full text-red-400 p-1">.</p>}
+                    {props.m.read === 0 && <p className="bg-red-400 rounded-full text-red-400 p-1">.</p>}
                     <p className="font-bold">{props.m.from}</p>
                     <p className="">{props.m.subject}</p>
                 </div>
-                {status && HTMLReactParser(props.m.content)}
+                {props.m.showcontent && HTMLReactParser(props.m.content)}
             </div>
         )
     }
@@ -89,13 +92,16 @@ const Inbox = (props) => {
                         result.name = value.name
                         result.read = value.read
                         result.key = key
+                        result.showcontent = false
                         a.push(result);
                     } catch (error) {
                         console.error(`${error.message}`);
                     }
                 }
-                if (a.length > 0) setMail(a)
-                props.setUnread(unread)
+                // if (a.length > 0) setMail(a)
+                if (a.length > 0) dispatch(mailactions.setMail(a))
+                dispatch(mailactions.setUnread(unread))
+                // props.setUnread(unread)
 
             } else {
                 const data = await response.json()
