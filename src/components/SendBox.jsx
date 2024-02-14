@@ -29,7 +29,7 @@ const SendBox = () => {
             if (response.ok) {
                 const res = await fetch(`https://reactcrud-51072-default-rtdb.firebaseio.com/mailbox/${tto}/receive.json`, {
                     method: 'POST',
-                    body: JSON.stringify(name),
+                    body: JSON.stringify({ name: name, read: 0 }),
                     headers: {
                         'Content-Type': 'application/json'
                     },
