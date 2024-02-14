@@ -9,14 +9,41 @@ const Inbox = (props) => {
     const navigate = useNavigate()
 
     const mail = useSelector(state => state.mail.mail)
+    const user = useSelector(state => state.mail.user)
+
 
     const dispatch = useDispatch()
 
     const MailList = (props) => {
 
+        const deleteHandler = async () => {
+            console.log(props.m)
+            try {
+                const response = await fetch(`https://reactcrud-51072-default-rtdb.firebaseio.com/mailbox/${user}/receive/${props.m.key}.json`, {
+                    method: 'DELETE'
+                })
+                if (response.ok) {
+                    const res = await fetch(`https://reactcrud-51072-default-rtdb.firebaseio.com/mailbox/${props.m.name}.json`, {
+                        method: 'DELETE'
+                    })
+                    if (res.ok) {
+                        dispatch(mailactions.deleteMail(props.m.key))
+                    } else {
+                        const data = await response.json()
+                        throw data.error
+                    }
+                } else {
+                    const data = await response.json()
+                    throw data.error
+                }
+
+            }
+            catch (err) {
+                alert('some error occured')
+            }
+        }
 
         const contentHandler = async () => {
-            const user = localStorage.getItem('MailboxUEmail')
             if (props.m.read === 0) {
                 try {
                     const response = await fetch(`https://reactcrud-51072-default-rtdb.firebaseio.com/mailbox/${user}/receive/${props.m.key}.json`, {
@@ -52,6 +79,7 @@ const Inbox = (props) => {
                     {props.m.read === 0 && <p className="bg-red-400 rounded-full text-red-400 p-1">.</p>}
                     <p className="font-bold">{props.m.from}</p>
                     <p className="">{props.m.subject}</p>
+                    <button onClick={deleteHandler} className="ml-auto hover:font-bold bg-red-600 text-white p-1 rounded-md">Delete</button>
                 </div>
                 {props.m.showcontent && HTMLReactParser(props.m.content)}
             </div>
@@ -76,7 +104,6 @@ const Inbox = (props) => {
     }
 
     const fetchMail = async () => {
-        const user = localStorage.getItem('MailboxUEmail')
 
         try {
             const response = await fetch(`https://reactcrud-51072-default-rtdb.firebaseio.com/mailbox/${user}/receive.json`)
