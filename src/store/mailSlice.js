@@ -5,6 +5,7 @@ const mail = createSlice({
     initialState: {
         unread: 0,
         mail: [],
+        sentMail: [],
         user: localStorage.getItem('MailboxUEmail') || null
     },
     reducers: {
@@ -13,6 +14,14 @@ const mail = createSlice({
         },
         setMail: (state, action) => {
             state.mail = action.payload
+        },
+        setSentMail: (state, action) => {
+            state.sentMail = action.payload
+        },
+        showdecreaseSentMailHandler: (state, action) => {
+            const idx = state.sentMail.findIndex(m => m.key === action.payload)
+            const mail = state.sentMail[idx]
+            mail.showcontent = !mail.showcontent
         },
         showdecreaseHandler: (state, action) => {
             const idx = state.mail.findIndex(m => m.key === action.payload)
@@ -26,9 +35,13 @@ const mail = createSlice({
                 state.unread = a - 1
             }
         },
-        deleteMail : (state,action)=>{
+        deleteMail: (state, action) => {
             state.mail = state.mail.filter(m => m.key !== action.payload)
+        },
+        deleteSendMail: (state, action) => {
+            state.sentMail = state.sentMail.filter(m => m.key !== action.payload)
         }
+
     }
 })
 

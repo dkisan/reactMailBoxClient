@@ -2,6 +2,7 @@ import { useState } from "react";
 import SendBox from "./SendBox";
 import Inbox from "./Inbox";
 import { useSelector } from "react-redux";
+import Sent from "./Sent";
 
 const Home = () => {
     const [btn, setBtn] = useState('Inbox')
@@ -30,6 +31,7 @@ const Home = () => {
                 <div className="w-5/6">
                     {btn === 'Compose' && < SendBox />}
                     {btn === 'Inbox' && < Inbox />}
+                    {btn === 'Sent' && < Sent />}
                 </div>
 
             </div>
