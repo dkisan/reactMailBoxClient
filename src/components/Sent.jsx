@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import HTMLReactParser from 'html-react-parser';
 import { useDispatch, useSelector } from "react-redux";
 import { mailactions } from "../store/mailSlice";
+import useFetchHooks from "../hooks/useFetchHooks";
 
 
 const Sent = (props) => {
@@ -26,7 +27,7 @@ const Sent = (props) => {
                     //     method: 'DELETE'
                     // })
                     // if (res.ok) {
-                        dispatch(mailactions.deleteSendMail(props.m.key))
+                    dispatch(mailactions.deleteSendMail(props.m.key))
                     // } else {
                     //     const data = await response.json()
                     //     throw data.error
@@ -62,6 +63,7 @@ const Sent = (props) => {
     const fetchEachEmail = async (name) => {
         try {
             const response = await fetch(`https://reactcrud-51072-default-rtdb.firebaseio.com/mailbox/${name}.json`)
+            console.log(response)
             if (response.ok) {
                 const data = await response.json()
                 return data
