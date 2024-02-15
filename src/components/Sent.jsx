@@ -15,8 +15,8 @@ const Sent = (props) => {
     const dispatch = useDispatch()
 
     const MailList = (props) => {
-        const deleteHandler = async () => {
-            console.log(props.m)
+        const deleteHandler = async (event) => {
+            event.stopPropagation()
             try {
                 const response = await fetch(`https://reactcrud-51072-default-rtdb.firebaseio.com/mailbox/${user}/send/${props.m.key}.json`, {
                     method: 'DELETE'
@@ -44,7 +44,6 @@ const Sent = (props) => {
 
         const contentHandler = async () => {
             dispatch(mailactions.showdecreaseSentMailHandler(props.m.key))
-
         }
 
         return (
@@ -124,7 +123,7 @@ const Sent = (props) => {
     return (
         <>
             {mail && mail.map((m, i) => {
-                return <MailList m={m} key={i} setUnread={props.setUnread} unread={props.unread} />
+                return <MailList m={m} key={i} />
             })}
             {mail.length === 0 && <p className="flex justify-center font-bold text-2xl">No Messages !!!</p>}
         </>

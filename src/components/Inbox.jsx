@@ -10,14 +10,16 @@ const Inbox = (props) => {
 
     const mail = useSelector(state => state.mail.mail)
     const user = useSelector(state => state.mail.user)
+    const unreadMail = useSelector(state => state.mail.unread)
 
 
     const dispatch = useDispatch()
 
     const MailList = (props) => {
 
-        const deleteHandler = async () => {
-            console.log(props.m)
+        const deleteHandler = async (event) => {
+            event.stopPropagation()
+
             try {
                 const response = await fetch(`https://reactcrud-51072-default-rtdb.firebaseio.com/mailbox/${user}/receive/${props.m.key}.json`, {
                     method: 'DELETE'
@@ -27,7 +29,7 @@ const Inbox = (props) => {
                     //     method: 'DELETE'
                     // })
                     // if (res.ok) {
-                        dispatch(mailactions.deleteMail(props.m.key))
+                    dispatch(mailactions.deleteMail(props.m.key))
                     // } else {
                     //     const data = await response.json()
                     //     throw data.error
@@ -126,8 +128,9 @@ const Inbox = (props) => {
                     }
                 }
                 // if (a.length > 0) setMail(a)
-                if (a.length > 0) dispatch(mailactions.setMail(a))
-                dispatch(mailactions.setUnread(unread))
+                // if (a.length > 0) dispatch(mailactions.setMail(a))
+                if (a.length > 0 && mail.length !== a.length) dispatch(mailactions.setMail(a))
+                if (unreadMail !== unread) dispatch(mailactions.setUnread(unread))
                 // props.setUnread(unread)
 
             } else {
@@ -144,7 +147,13 @@ const Inbox = (props) => {
         if (!localStorage.getItem('MailboxUToken')) {
             navigate('/login')
         } else {
-            fetchMail()
+            const a = setInterval(() => {
+                fetchMail()
+            }, 2000)
+
+            return () => {
+                clearInterval(a)
+            }
         }
     }, [])
 
